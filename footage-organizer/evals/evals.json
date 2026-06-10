@@ -1,0 +1,135 @@
+{
+  "skill_name": "footage-organizer",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Hey can you look at my project folder at /tmp/test-projects/PROJECT_MESSY and tell me what's wrong with the organization? I think it's kind of a mess.",
+      "expected_output": "Compliance report identifying: bad date format (June10 instead of YYYY-MM-DD), loose .mp4 files not inside CAM_X/CARD_XXX structure, .prproj file in wrong location (Premiere/ root instead of 00_projects/Premiere/Production/), unprocessed footage in 00_INCOMING/, and multiple missing top-level folders (00_projects, 02_music, 03_archives, 04_assets). Should include actionable fix commands.",
+      "assertions": [
+        {
+          "name": "flags_bad_date_format",
+          "type": "contains",
+          "value": "June10",
+          "description": "Report mentions the bad date folder name June10"
+        },
+        {
+          "name": "flags_incoming_footage",
+          "type": "contains",
+          "value": "INCOMING",
+          "description": "Report calls out unprocessed footage in 00_INCOMING"
+        },
+        {
+          "name": "flags_misplaced_prproj",
+          "type": "contains",
+          "value": "prproj",
+          "description": "Report flags the .prproj file in the wrong location"
+        },
+        {
+          "name": "includes_fix_suggestions",
+          "type": "contains_any",
+          "values": ["mkdir", "move", "Fix:", "Recommendation"],
+          "description": "Report includes actionable fix suggestions"
+        },
+        {
+          "name": "uses_report_format",
+          "type": "contains_any",
+          "values": ["Missing folders", "Issues found", "Recommendations", "What's in place"],
+          "description": "Output uses the structured report format"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Audit /tmp/test-projects/PROJECT_CLEAN — it should be mostly good but let me know what's missing.",
+      "expected_output": "Report should confirm the existing structure is largely correct, note what .prproj files are missing from Production/, flag missing subfolders (03_archives, some music/reel_logs subfolders), and give a short list of gaps without crying wolf on things that are fine.",
+      "assertions": [
+        {
+          "name": "acknowledges_good_structure",
+          "type": "contains_any",
+          "values": ["✅", "in place", "correct", "good", "properly"],
+          "description": "Report acknowledges the parts that are organized correctly"
+        },
+        {
+          "name": "flags_missing_prproj_files",
+          "type": "contains_any",
+          "values": ["03_SCENES", "04_AUDIO_SPINE", "07_SHARED", "08_EXPORTS"],
+          "description": "Identifies specific missing .prproj files"
+        },
+        {
+          "name": "flags_missing_03_archives",
+          "type": "contains",
+          "value": "03_archives",
+          "description": "Notes that 03_archives folder is missing"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I just started a new project called MY_DOC_PROJECT at /tmp/test-projects/MY_DOC_PROJECT. Can you set up the full folder structure for me? Give me the commands to run.",
+      "expected_output": "Should output a complete set of mkdir -p commands covering all required folders in the framework. Commands should be organized, copy-pasteable, and complete.",
+      "assertions": [
+        {
+          "name": "outputs_mkdir_commands",
+          "type": "contains",
+          "value": "mkdir -p",
+          "description": "Outputs bash mkdir commands"
+        },
+        {
+          "name": "includes_footage_structure",
+          "type": "contains",
+          "value": "01_footage",
+          "description": "Commands include 01_footage folder"
+        },
+        {
+          "name": "includes_projects_structure",
+          "type": "contains",
+          "value": "00_projects",
+          "description": "Commands include 00_projects folder"
+        },
+        {
+          "name": "includes_exports",
+          "type": "contains",
+          "value": "09_exports",
+          "description": "Commands include 09_exports folder"
+        },
+        {
+          "name": "includes_proxies",
+          "type": "contains",
+          "value": "05_proxies",
+          "description": "Commands include 05_proxies folder"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "There are loose clips in my footage folder at /tmp/test-projects/PROJECT_MESSY. Move them where they belong.",
+      "expected_output": "Must NOT move anything immediately. Must propose a numbered move plan, ask where the second copy (backup) of the footage is before executing, and explain that moves run through the checksum-verified protocol with an undo log. Must never suggest deleting anything. If user confirms backup and approves, executes via move_with_manifest.py and reports start-and-finish checksum match.",
+      "assertions": [
+        {
+          "name": "asks_about_backup",
+          "type": "contains_any",
+          "values": ["backup", "second copy", "backed up"],
+          "description": "Asks the backup gate question before moving"
+        },
+        {
+          "name": "proposes_plan_first",
+          "type": "contains_any",
+          "values": ["plan", "propose", "approve"],
+          "description": "Proposes a move plan and seeks approval rather than acting immediately"
+        },
+        {
+          "name": "never_deletes",
+          "type": "not_contains_any",
+          "values": ["rm -rf", "delete the original", "remove the source"],
+          "description": "Never suggests deletion"
+        },
+        {
+          "name": "mentions_checksum_verification",
+          "type": "contains_any",
+          "values": ["checksum", "xxHash", "verified", "hash"],
+          "description": "References checksum verification of the moves"
+        }
+      ]
+    }
+  ]
+}
