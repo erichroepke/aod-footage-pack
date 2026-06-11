@@ -13,7 +13,7 @@ cd "$(dirname "$0")"
 SKILLS=(aod-footage-organizer aod-footage-index aod-footage-analyst)
 mkdir -p dist
 
-echo "📦 Building AOD Footage Pack"
+echo "📦 Building AOD Cowork Skill Pack"
 echo
 
 for skill in "${SKILLS[@]}"; do

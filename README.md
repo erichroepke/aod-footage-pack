@@ -1,4 +1,4 @@
-# AOD Footage Pack
+# AOD Cowork Skill Pack
 
 ---
 
@@ -70,7 +70,7 @@ You don't have to follow the steps below on your own. Open a **new chat in the C
 
 ```
 I want to install a Claude skill called "aod-footage-organizer" from the AOD
-Footage Pack. Please act as my personal install assistant and walk me through
+Cowork Skill Pack. Please act as my personal install assistant and walk me through
 it ONE STEP AT A TIME — wait for me to confirm each step before moving to the
 next. I am not technical, so keep instructions simple and tell me exactly what
 to click. Here is what we need to do together:
@@ -81,7 +81,7 @@ to click. Here is what we need to do together:
 
 2. Then send me this download link and tell me to click it. It saves a file
    called aod-footage-organizer.skill to my Downloads folder:
-   https://github.com/erichroepke/aod-footage-pack/releases/download/v0.1.0-alpha/aod-footage-organizer.skill
+   https://github.com/erichroepke/aod-cowork-skill-pack/releases/download/v0.1.0-alpha/aod-footage-organizer.skill
    Tell me NOT to double-click the downloaded file — that does nothing.
 
 3. Then walk me through installing it: in this app's left sidebar I click
@@ -124,9 +124,9 @@ If this setting is off, the skills cannot run. It only needs to be enabled once 
 
 Click each link below. The file will download to your **Downloads** folder.
 
-- [`aod-footage-organizer.skill`](https://github.com/erichroepke/aod-footage-pack/releases/download/v0.1.0-alpha/aod-footage-organizer.skill)
-- [`aod-footage-index.skill`](https://github.com/erichroepke/aod-footage-pack/releases/download/v0.1.0-alpha/aod-footage-index.skill)
-- [`aod-footage-analyst.skill`](https://github.com/erichroepke/aod-footage-pack/releases/download/v0.1.0-alpha/aod-footage-analyst.skill)
+- [`aod-footage-organizer.skill`](https://github.com/erichroepke/aod-cowork-skill-pack/releases/download/v0.1.0-alpha/aod-footage-organizer.skill)
+- [`aod-footage-index.skill`](https://github.com/erichroepke/aod-cowork-skill-pack/releases/download/v0.1.0-alpha/aod-footage-index.skill)
+- [`aod-footage-analyst.skill`](https://github.com/erichroepke/aod-cowork-skill-pack/releases/download/v0.1.0-alpha/aod-footage-analyst.skill)
 
 Do not double-click these files in Finder and do not download the "Source code" zip. The steps below are the only way to install them.
 

@@ -49,7 +49,7 @@ Subcommands: `init` · `ingest-path` · `ingest-transcript` · `tag` · `search`
 
 ## Bundle role: index last, then chat
 
-In the AOD Footage Pack bundle, this skill is the final durable step. The organizer
+In the AOD Cowork Skill Pack bundle, this skill is the final durable step. The organizer
 creates the clean folder state and move/checksum evidence; the analyst creates
 transcripts and people/topic tags for selected footage; then the index ingests the
 final paths plus those analysis results. After that, the user can chat with the

@@ -417,7 +417,7 @@ on macOS; if the environment offers a file-presentation tool, use that as well.
 ## Step 6: Feed the footage index (if aod-footage-index is installed)
 
 Phase 2 writes `transcript.json` in the output directory — exactly the format the
-**aod-footage-index** skill ingests. In the full AOD Footage Pack workflow, analysis feeds
+**aod-footage-index** skill ingests. In the full AOD Cowork Skill Pack workflow, analysis feeds
 the final index step. Do not show the user an internal handoff packet; just summarize
 the useful result ("transcript ready", "faces labeled", "ready to index").
 
