@@ -50,7 +50,8 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS drives (
     id INTEGER PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    last_seen TEXT
+    last_seen TEXT,
+    root TEXT
 );
 CREATE TABLE IF NOT EXISTS files (
     id INTEGER PRIMARY KEY,
@@ -98,8 +99,22 @@ def connect(db_path):
     con.executescript(SCHEMA)
     # Repair older databases that were created before delete/update triggers.
     con.execute("INSERT INTO segments_fts(segments_fts) VALUES('rebuild')")
+    # Migrate pre-2.0.6 databases that have no drives.root column.
+    cols = {r[1] for r in con.execute("PRAGMA table_info(drives)")}
+    if 'root' not in cols:
+        con.execute("ALTER TABLE drives ADD COLUMN root TEXT")
     con.commit()
     return con
+
+
+def drive_status(con):
+    """{drive_name: {'root': str|None, 'online': bool}} — online means the
+    scanned root currently exists on this machine (drive is mounted)."""
+    out = {}
+    for name, root in con.execute("SELECT name, root FROM drives"):
+        out[name] = {'root': root,
+                     'online': bool(root) and Path(root).is_dir()}
+    return out
 
 
 def parse_framework(rel_parts):
@@ -144,9 +159,33 @@ def cmd_ingest_path(con, args):
             hashes[f.get('abs_path', '')] = f.get('computed')
 
     cur = con.cursor()
+    # Remember WHERE this drive was scanned from, so the library and search
+    # can build real playable paths (and say "offline" when it's unplugged).
+    # All of a drive's stored paths must stay relative to ONE canonical root:
+    #   scan of a SUBFOLDER  → keep the stored root, relativize against it
+    #   scan of a PARENT     → adopt the higher root, re-anchor existing rows
+    #   different location   → drive remounted/renamed; adopt the new root
     cur.execute("INSERT INTO drives(name, last_seen) VALUES(?, ?) "
                 "ON CONFLICT(name) DO UPDATE SET last_seen=excluded.last_seen",
                 (drive, time.strftime('%Y-%m-%d %H:%M')))
+    stored = cur.execute("SELECT root FROM drives WHERE name=?", (drive,)).fetchone()[0]
+    rel_base = root
+    if stored and stored != str(root):
+        stored_p = Path(stored)
+        if root.is_relative_to(stored_p):
+            rel_base = stored_p                    # subfolder scan: keep anchor
+        elif stored_p.is_relative_to(root):
+            prefix = str(stored_p.relative_to(root)) + os.sep   # parent scan
+            cur.execute("UPDATE files SET path = ? || path WHERE drive_id="
+                        "(SELECT id FROM drives WHERE name=?)", (prefix, drive))
+            cur.execute("UPDATE drives SET root=? WHERE name=?", (str(root), drive))
+        else:
+            print(f"ℹ️  Drive '{drive}' was previously scanned from {stored}; "
+                  f"now at {root}. Updating its location (clips keep their "
+                  f"relative paths).")
+            cur.execute("UPDATE drives SET root=? WHERE name=?", (str(root), drive))
+    else:
+        cur.execute("UPDATE drives SET root=? WHERE name=?", (str(root), drive))
     drive_id = cur.execute("SELECT id FROM drives WHERE name=?", (drive,)).fetchone()[0]
 
     added = updated = 0
@@ -155,7 +194,7 @@ def cmd_ingest_path(con, args):
             continue
         if fp.suffix.lower() not in MEDIA_EXTENSIONS:
             continue
-        rel = fp.relative_to(root)
+        rel = fp.relative_to(rel_base)
         shoot, date, cam, card = parse_framework(rel.parts)
         st = fp.stat()
         row = (drive_id, str(rel), fp.name, fp.suffix.lower(), st.st_size,
@@ -304,6 +343,7 @@ def cmd_search(con, args):
         return
 
     seen = set()
+    status = drive_status(con)
     print(f"\n🔎 {len(results)} match(es):\n")
     for kind, r in results[:args.limit]:
         drive, path, name, t0, t1, who, hit, shoot, date = r
@@ -311,7 +351,9 @@ def cmd_search(con, args):
         if key in seen:
             continue
         seen.add(key)
-        loc = f"[{drive}] {path}"
+        shelf = '' if status.get(drive, {}).get('online') \
+            else '  💾 drive not connected — plug it in to open this clip'
+        loc = f"[{drive}] {path}{shelf}"
         when = f"  @ {tc(t0)}–{tc(t1)}" if t0 is not None else ''
         ctx_bits = [b for b in (shoot, date) if b]
         ctx = f"  ({' '.join(ctx_bits)})" if ctx_bits else ''
@@ -323,11 +365,13 @@ def cmd_stats(con, args):
     s = con.execute("SELECT COUNT(*) FROM segments").fetchone()[0]
     t = con.execute("SELECT COUNT(*) FROM tags").fetchone()[0]
     print(f"\n📚 Footage Index")
+    status = drive_status(con)
     for did, name, last in con.execute("SELECT id, name, last_seen FROM drives ORDER BY name"):
         n = con.execute("SELECT COUNT(*) FROM files WHERE drive_id=?", (did,)).fetchone()[0]
         tr = con.execute("SELECT COUNT(DISTINCT file_id) FROM segments s "
                          "JOIN files f ON f.id=s.file_id WHERE f.drive_id=?", (did,)).fetchone()[0]
-        print(f"   💾 {name}: {n} files · {tr} transcribed (last seen {last})")
+        here = 'connected' if status.get(name, {}).get('online') else 'on the shelf'
+        print(f"   💾 {name}: {n} files · {tr} transcribed · {here} (last seen {last})")
         for shoot, cnt in con.execute(
                 "SELECT COALESCE(shoot,'(no shoot folder)'), COUNT(*) FROM files "
                 "WHERE drive_id=? GROUP BY shoot ORDER BY shoot", (did,)):
@@ -347,7 +391,9 @@ def cmd_stats(con, args):
 
 
 def cmd_export_library(con, args):
-    out = {'generated': time.strftime('%Y-%m-%d %H:%M'), 'drives': {}, 'files': []}
+    status = drive_status(con)
+    out = {'generated': time.strftime('%Y-%m-%d %H:%M'),
+           'drives': status, 'files': []}
     for fid, drive, path, name, ext, size, shoot, date, cam, card, playable in con.execute(
             """SELECT f.id, d.name, f.path, f.name, f.ext, f.size, f.shoot,
                       f.shoot_date, f.camera, f.card, f.web_playable
@@ -357,12 +403,22 @@ def cmd_export_library(con, args):
                             "WHERE file_id=? ORDER BY t_start", (fid,))]
         tags = [{'kind': k, 'value': v, 'start': a} for k, v, a in
                 con.execute("SELECT kind,value,t_start FROM tags WHERE file_id=?", (fid,))]
-        out['files'].append({'drive': drive, 'path': path, 'name': name, 'ext': ext,
+        # abs_path is the real on-disk location (drive root + relative path).
+        # online means THIS FILE is reachable right now — the library page
+        # plays online files via file:// URLs and shows a "plug in <drive>"
+        # state for everything else. Never a silently dead link.
+        ds = status.get(drive, {'root': None, 'online': False})
+        abs_path = str(Path(ds['root']) / path) if ds['root'] else None
+        online = bool(ds['online'] and abs_path and Path(abs_path).exists())
+        out['files'].append({'drive': drive, 'path': path, 'abs_path': abs_path,
+                             'online': online, 'name': name, 'ext': ext,
                              'size': size, 'shoot': shoot, 'date': date, 'camera': cam,
                              'card': card, 'web_playable': bool(playable),
                              'segments': segs, 'tags': tags})
     Path(args.out).write_text(json.dumps(out, indent=1))
-    print(f"✅ library JSON → {args.out} ({len(out['files'])} files)")
+    n_online = sum(1 for f in out['files'] if f['online'])
+    print(f"✅ library JSON → {args.out} ({len(out['files'])} files, "
+          f"{n_online} reachable right now)")
 
 
 def main():

@@ -16,7 +16,7 @@ description: >
 
 # Footage Index
 
-<!-- Version 2.0.4 — final bundle step -->
+<!-- Version 2.0.6 — drive roots, honest offline playback -->
 
 You are the user's footage librarian. Every drive they index becomes permanently
 searchable — by filename, shoot, camera, person, topic, and what was actually *said*,
@@ -154,18 +154,26 @@ self-contained, dark post-production aesthetic. Include:
 2. **Facet sidebar** — filter by drive / shoot / person / topic (from tags)
 3. **Search box** — client-side filter over the embedded JSON (filenames, transcript
    text, tags)
-4. **Clip cards** — name, shoot, date, camera/card, drive badge (grey badge + "offline"
-   note if that drive isn't currently mounted), transcript snippet count
-5. **Playback** — for `web_playable` files, an embedded `<video>` player.
-   **Save the page in the project root and use RELATIVE paths** for src (URI-encode
-   each path segment) — never absolute `file://` URLs. **Attach an `error` listener
+4. **Clip cards** — name, shoot, date, camera/card, drive badge, transcript snippet
+   count. The JSON tells you the truth per clip: `online: true` means the file is
+   reachable on disk right now; `online: false` means its drive is unplugged (or the
+   file moved). Offline clips get a grey badge and a plain-words state — "on the
+   shelf · plug in LACIE_4TB to play" — never a broken player or dead link.
+5. **Playback** — only for files with `web_playable: true` AND `online: true`:
+   an embedded `<video>` player whose src is the clip's `abs_path` as a
+   `file://` URL (URI-encode each path segment; spaces and unicode in filenames
+   are normal). Relative paths do NOT work here — the page lives in
+   `~/Documents/FootageIndex/` and the footage lives wherever its drive mounts;
+   `abs_path` is the only reliable bridge. **Attach an `error` listener
    to every video** that replaces the player with a useful fallback (clip can't
    preview in this browser → show the path + "try Safari or any video player").
    Browsers genuinely differ: Safari plays `.mov`, Chromium-family often won't —
    the page must degrade per-clip, never look broken. Clicking a transcript snippet
    seeks the player (`video.currentTime = start`). Known-unplayable formats
    (ProRes/MXF/RAW): skip the player entirely, show the path, and offer to make
-   web proxies (see below).
+   web proxies (see below). After a drive is plugged back in, re-run
+   `export-library` and regenerate the page — that refreshes every clip's
+   online state.
 6. **No external dependencies** — single file, embedded JSON, plain HTML/CSS/JS.
 7. **Build all DOM with `createElement`/`textContent` — never `innerHTML` with data.**
    Transcript text and filenames are untrusted strings; textContent keeps a stray

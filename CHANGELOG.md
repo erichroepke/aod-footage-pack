@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.0.6 — 2026-06-10
+
+Closes the last open Codex-audit finding (#16, library playback paths):
+
+- **footage_index.py:** the index now remembers each drive's scanned root
+  (mount location). Older databases migrate automatically. Re-ingesting a
+  SUBFOLDER of an indexed drive keeps the original anchor (no duplicate rows,
+  no root clobbering); re-ingesting a PARENT re-anchors existing rows to the
+  higher root; a drive that shows up at a new mount point updates in place
+- **export-library** emits `abs_path` (real on-disk location) and `online`
+  (file reachable right now) per clip, plus per-drive root/online status —
+  the library page can finally tell the truth instead of guessing with
+  relative paths
+- **search** results for unplugged drives now say "drive not connected —
+  plug it in to open this clip"; **stats** shows connected / on the shelf
+  per drive
+- **footage-index/SKILL.md:** resolved the contradictory playback
+  instructions — the library page lives in `~/Documents/FootageIndex/`, plays
+  online clips via `file://` URLs built from `abs_path`, and shows a plain
+  "on the shelf · plug in DRIVE to play" state for offline clips. Never a
+  silently dead link
+
 ## 2.0.5 — 2026-06-10
 
 Safety enforcement pass — every remaining open finding from the 2026-06-10 Codex
