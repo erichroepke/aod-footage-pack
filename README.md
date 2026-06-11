@@ -34,7 +34,7 @@ The three work as one bundle. **Organizer and analyst create the
 evidence; index is the final "this folder is searchable now" step.** Once a folder is
 indexed, you can just chat with Claude about the footage.
 
-Everything runs **on your computer**. No footage is ever uploaded anywhere.
+Your footage stays **on your computer**. The video files themselves are never uploaded anywhere. What Claude reads in chat (file names, transcripts, face thumbnails during labeling) does travel to Anthropic like any Claude conversation. The full picture is in [Your data](#your-data-what-stays-on-your-mac-and-what-claude-sees) below. Read it before you index anything sensitive.
 
 ---
 
@@ -56,6 +56,35 @@ So: **always keep a backup of your footage before organizing. Never run this on 
 only copy.** The skill enforces this (it asks about your backup before moving a single
 file), but you're the one responsible for protecting your material. That's true of any
 tool that touches camera originals, this one included. It's provided free, as-is.
+
+---
+
+## Your data: what stays on your Mac and what Claude sees
+
+I want to be straight with you about where your material goes, because "it runs locally" is true but it's not the whole story.
+
+**These things stay on your Mac and never leave it:**
+
+- Your video and audio files. They are never uploaded. The scripts scan, move, transcribe, and analyze them right on your drive.
+- The transcription itself. Whisper runs on your Mac's own processor, not in the cloud.
+- Face detection. The analysis happens locally.
+- The search index (one SQLite file in your Documents folder), the HTML reports, the checksums, and the undo log. All ordinary files on your computer.
+
+**These things go to Anthropic's servers, because they pass through the Claude conversation:**
+
+- Anything Claude reads or writes in chat. That includes your folder trees, file names, and scan summaries.
+- Transcript text. The transcription runs locally, but the moment Claude reads it to summarize or search it, that interview content is part of your chat, and your chats live on Anthropic's servers like any Claude conversation.
+- Face thumbnails. During the labeling step, small cropped photos of the people in your footage appear in the chat so you can name them. Those images, and the names you type, are part of the conversation.
+- This is the same as anything else you'd type or paste into Claude. It's governed by Anthropic's privacy policy, not by me.
+
+**One setting you should check:** in the Claude app, go to Settings, then Privacy, and look at whether your chats can be used to improve Anthropic's models. If you're working with sensitive material, turn that off. It takes ten seconds.
+
+**My plain advice:** if footage is under NDA, legally sensitive, or involves vulnerable subjects, think before you transcribe and index it. The files stay home, but the words and faces that come out of them become chat content. For most projects this is a complete non-issue. For some of yours, given the work this community does, it might matter. You're the only one who can make that call, so I'm giving you the information to make it.
+
+**Third parties (analyst skill only):**
+
+- Speaker diarization (the "who said what" feature) is optional and requires a free HuggingFace account and access token. You'll create that account yourself, and HuggingFace's terms apply to it.
+- The install pulls free tools from Homebrew and the model files from their official sources. Standard open-source downloads, nothing unusual.
 
 ---
 
