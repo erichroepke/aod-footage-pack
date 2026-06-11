@@ -1,6 +1,31 @@
 # Changelog
 
+## 0.1.0-alpha — 2026-06-11
+
+Honest version reset + AOD naming. No code behavior change.
+
+- **Version reset to 0.1.0-alpha.** The earlier 2.0.x numbers implied a maturity
+  this pack has not earned: no outside user has installed it, and the end-to-end
+  run (Claude executing the scripts against a real drive in Cowork) is still
+  unverified. This is an alpha. The prior 2.0.x history is preserved in git tags;
+  all 2.0.x release pages are superseded by this one.
+- **All three skills renamed with an `aod-` prefix** so they're identifiable in a
+  student's skills list and namespaced to the Art of Documentary course:
+  - `footage-organizer` → `aod-footage-organizer`
+  - `footage-index` → `aod-footage-index`
+  - `footage-analyst` → `aod-footage-analyst`
+  The `name:` field in each SKILL.md (what Claude keys on), the folders, the build
+  script, every cross-reference, and the user-facing script messages were all
+  updated. Distributed files are now `aod-footage-*.skill`.
+- **Note for anyone who installed a pre-rename version:** the rename makes these
+  NEW skills in your account, not in-place updates. Remove the old
+  `footage-organizer` (etc.) from Customize → Skills and install the `aod-`
+  versions.
+
+---
+
 ## 2.0.7 — 2026-06-11
+*(superseded by 0.1.0-alpha — version numbering reset; content carried forward)*
 
 Install path corrected and staged (docs/packaging only, no script changes):
 

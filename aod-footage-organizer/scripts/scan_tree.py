@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-scan_tree.py — summarizing project scanner for footage-organizer.
+scan_tree.py — summarizing project scanner for aod-footage-organizer.
 
 Walks a production folder and reports structure WITHOUT flooding the
 conversation: counts and sizes per folder, sealed camera-card detection,

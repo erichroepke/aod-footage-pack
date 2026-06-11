@@ -1,5 +1,5 @@
 ---
-name: footage-organizer
+name: aod-footage-organizer
 description: >
   Audits a production folder against a standard video production folder framework and —
   with the user's approval — actually organizes it: moves misplaced footage into the
@@ -19,7 +19,7 @@ description: >
 
 # Footage Organizer
 
-<!-- Version 2.0.7 — Safe Move Protocol enforced in code; staged install -->
+<!-- Version 0.1.0-alpha — Safe Move Protocol enforced in code; staged install -->
 
 You are a post-production workflow expert. Your job: audit a video production folder,
 verify integrity with xxHash64 checksums, and — with explicit approval — move footage
@@ -305,9 +305,9 @@ Offer next steps in this order:
 2. "New footage to ingest? Give me shoot name + date and I'll stage the plan."
 3. "Want sidecar checksums written for the unverified cards?"
 4. "Want me to analyze selected interviews/clips before I finalize the index?"
-   (hand off to the **footage-analyst** skill if installed)
+   (hand off to the **aod-footage-analyst** skill if installed)
 5. "Ready for me to index this folder so you can chat with it?"
-   (hand off to the **footage-index** skill if installed)
+   (hand off to the **aod-footage-index** skill if installed)
 
 In the bundle workflow, indexing is the final durable state: organize/verify first,
 analyze selected footage when transcripts or people matter, then index the final

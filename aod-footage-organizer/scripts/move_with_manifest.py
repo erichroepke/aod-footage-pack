@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-move_with_manifest.py — the Safe Move Protocol executor for footage-organizer.
+move_with_manifest.py — the Safe Move Protocol executor for aod-footage-organizer.
 
 Guarantees, enforced in code:
   * NEVER deletes anything. There is no deletion code in this file.

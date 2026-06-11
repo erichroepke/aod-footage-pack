@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-SKILLS=(footage-organizer footage-index footage-analyst)
+SKILLS=(aod-footage-organizer aod-footage-index aod-footage-analyst)
 mkdir -p dist
 
 echo "📦 Building AOD Footage Pack"

@@ -1,12 +1,16 @@
 # AOD Footage Pack
 
+> **Alpha (v0.1.0).** Early and under active development. The core has been tested hard,
+> but the install and end-to-end run have not yet been proven by an outside user. Treat
+> it as a preview, keep a backup of your footage, and expect rough edges.
+
 **Claude becomes your post supervisor.** Three skills for documentary filmmakers:
 
 | Skill | What it does | What you say |
 |-------|--------------|--------------|
-| 🗂 **footage-organizer** | Audits your drive against a professional folder structure, then — with your approval — safely moves footage into place. Every move is verified with a digital fingerprint, moves on the same drive are undoable with one command, and deleting is impossible. | *"Check my footage folder"* · *"Organize this drive"* |
-| 🔎 **footage-index** | A searchable memory of every drive you've ever scanned. Ask for a moment, get the drive, file, and timecode — even if that drive is on a shelf. | *"Where's the interview where she talks about her father?"* |
-| 🎞 **footage-analyst** | Transcribes footage, identifies who's on screen (you label the faces), breaks down speakers, makes a beautiful HTML report. | *"Transcribe this clip"* · *"Who's in this video?"* |
+| 🗂 **aod-footage-organizer** | Audits your drive against a professional folder structure, then — with your approval — safely moves footage into place. Every move is verified with a digital fingerprint, moves on the same drive are undoable with one command, and deleting is impossible. | *"Check my footage folder"* · *"Organize this drive"* |
+| 🔎 **aod-footage-index** | A searchable memory of every drive you've ever scanned. Ask for a moment, get the drive, file, and timecode — even if that drive is on a shelf. | *"Where's the interview where she talks about her father?"* |
+| 🎞 **aod-footage-analyst** | Transcribes footage, identifies who's on screen (you label the faces), breaks down speakers, makes a beautiful HTML report. | *"Transcribe this clip"* · *"Who's in this video?"* |
 
 Treat them as one bundle, not three separate apps. **Organizer and analyst create the
 evidence; index is the final "this folder is searchable now" step.** Once a folder is
@@ -48,10 +52,10 @@ make sure **"Code execution and file creation"** is turned ON. Skills need it to
 
 ### Step 1 — install the organizer (your first win)
 
-1. **Download** `footage-organizer.skill` from the **Releases** link on this page (or
+1. **Download** `aod-footage-organizer.skill` from the **Releases** link on this page (or
    the link in your AOD course materials). It lands in your **Downloads** folder.
 2. In Claude, click **Customize** in the left sidebar → **Skills**. Click the **+**
-   button → **Create skill** → **Upload a skill**, and pick `footage-organizer.skill`
+   button → **Create skill** → **Upload a skill**, and pick `aod-footage-organizer.skill`
    from Downloads. Claude reads it and shows a short summary.
    *(Don't double-click the `.skill` file in Finder — that opens Claude but installs
    nothing. Always go through Customize → Skills.)*
@@ -68,8 +72,8 @@ That's the whole first experience. No terminal, no setup, nothing to break.
 When you're ready for searchable footage and transcripts, install the other two the
 same way (**Customize → Skills → + → Upload a skill**):
 
-- **`footage-index.skill`** — searchable memory of every drive. Still zero setup.
-- **`footage-analyst.skill`** — transcripts + face ID. The first time you use it,
+- **`aod-footage-index.skill`** — searchable memory of every drive. Still zero setup.
+- **`aod-footage-analyst.skill`** — transcripts + face ID. The first time you use it,
   Claude installs its free helper tools for you, asking permission as it goes — still
   no Terminal.
 
@@ -152,10 +156,10 @@ session begins, so an update doesn't apply to chats that are already open.
 ## What's inside (for the curious)
 
 ```
-footage-organizer/   SKILL.md + scan_tree.py, checksum_scan.py, move_with_manifest.py
-footage-index/       SKILL.md + footage_index.py        (SQLite, all local)
-footage-analyst/     SKILL.md + extract_faces.py, analyze_footage.py
-build.sh             packages the .skill files (maintainers only)
+aod-footage-organizer/   SKILL.md + scan_tree.py, checksum_scan.py, move_with_manifest.py
+aod-footage-index/       SKILL.md + footage_index.py   (SQLite, all local)
+aod-footage-analyst/     SKILL.md + extract_faces.py, analyze_footage.py
+build.sh                 packages the .skill files (maintainers only)
 ```
 
 - Organizer + index need **zero dependencies** — they run on what's already on a Mac.
@@ -169,7 +173,7 @@ build.sh             packages the .skill files (maintainers only)
 The organizer teaches a professional production structure — `00_projects` /
 `01_footage` (shoots → dates → cameras → cards, originals preserved exactly) /
 `02_music` / `03_archives` / `04_assets` / `05_proxies` / `09_exports`. The full spec
-with rules lives in [footage-organizer/SKILL.md](footage-organizer/SKILL.md).
+with rules lives in [aod-footage-organizer/SKILL.md](aod-footage-organizer/SKILL.md).
 
 ## License
 

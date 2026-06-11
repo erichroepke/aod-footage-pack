@@ -1,5 +1,5 @@
 ---
-name: footage-analyst
+name: aod-footage-analyst
 description: >
   Transcribes video footage, identifies and clusters faces with interactive labeling,
   performs speaker diarization, and generates a self-contained HTML report. Uses a
@@ -16,7 +16,7 @@ description: >
 
 # Footage Analyst
 
-<!-- Version 2.0.7 — hardened installer, MLX fast path, bundle index feed -->
+<!-- Version 0.1.0-alpha — hardened installer, MLX fast path, bundle index feed -->
 
 You analyze video files using a two-phase workflow:
 - **Phase 1**: Fast face extraction → interactive labeling artifact → user names each person
@@ -213,7 +213,7 @@ pip3 install pyannote.audio --break-system-packages
 **Step E4 — Get your access token**:
 1. Go to **https://huggingface.co/settings/tokens**
 2. Click **"New token"**
-3. Name it anything (e.g. "footage-analyst"), role: **Read**
+3. Name it anything (e.g. "aod-footage-analyst"), role: **Read**
 4. Click **Generate** and copy the token (starts with `hf_`)
 5. Paste it here — you'll pass it to the script as `--hf-token "hf_xxxx"`
 
@@ -247,7 +247,7 @@ mlx_whisper "/path/to/clip.mov" --output-dir "/path/to/out" --output-format json
 ```
 
 The JSON output is `{"segments": [...]}` with `start`/`end`/`text` per segment (no
-`speaker` field — speaker separation is skipped on this fast path). The footage-index
+`speaker` field — speaker separation is skipped on this fast path). The aod-footage-index
 `ingest-transcript` command accepts this file directly. Present the transcript, then
 feed it to the index (Step 6) like any other result. On Intel Macs, or if mlx-whisper
 fails, fall back to `openai-whisper` from the main install path. Either way the user
@@ -414,22 +414,22 @@ on macOS; if the environment offers a file-presentation tool, use that as well.
 
 ---
 
-## Step 6: Feed the footage index (if footage-index is installed)
+## Step 6: Feed the footage index (if aod-footage-index is installed)
 
 Phase 2 writes `transcript.json` in the output directory — exactly the format the
-**footage-index** skill ingests. In the full AOD Footage Pack workflow, analysis feeds
+**aod-footage-index** skill ingests. In the full AOD Footage Pack workflow, analysis feeds
 the final index step. Do not show the user an internal handoff packet; just summarize
 the useful result ("transcript ready", "faces labeled", "ready to index").
 
 If the index skill is installed, offer:
 "Ready for me to index this folder so you can chat with these transcripts?"
 
-(`<footage-index_skill_dir>` below means the footage-index skill's own install
+(`<aod-footage-index_skill_dir>` below means the aod-footage-index skill's own install
 directory — you know it if that skill is active in this session; otherwise locate
 its `scripts/footage_index.py` under the same skills folder this skill lives in.)
 
 ```bash
-python3 <footage-index_skill_dir>/scripts/footage_index.py ingest-transcript \
+python3 <aod-footage-index_skill_dir>/scripts/footage_index.py ingest-transcript \
   --file-path "/path/to/video.mp4" \
   --json "/path/to/output_dir/transcript.json"
 ```
@@ -437,12 +437,12 @@ python3 <footage-index_skill_dir>/scripts/footage_index.py ingest-transcript \
 Then add a person tag for each labeled face:
 
 ```bash
-python3 <footage-index_skill_dir>/scripts/footage_index.py tag \
+python3 <aod-footage-index_skill_dir>/scripts/footage_index.py tag \
   --file-path "/path/to/video.mp4" --kind person --value "Sarah Jones"
 ```
 
 (If the clip's drive isn't indexed yet, run `ingest-path` on the project first —
-see the footage-index skill.) After this, tell the user plainly that the folder is
+see the aod-footage-index skill.) After this, tell the user plainly that the folder is
 indexed and they can ask "where does Sarah talk about X" months from now and get this
 clip + timecode back.
 

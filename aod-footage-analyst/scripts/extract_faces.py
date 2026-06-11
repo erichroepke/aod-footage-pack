@@ -217,7 +217,7 @@ def main():
     missing = check_dependencies()
     if missing:
         print(f"ERROR: Missing dependencies: {', '.join(missing)}")
-        print("Run the footage-analyst skill setup to install them.")
+        print("Run the aod-footage-analyst skill setup to install them.")
         sys.exit(1)
 
     video_path = Path(args.input)

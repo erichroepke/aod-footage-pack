@@ -21,7 +21,7 @@ Subcommands:
     stats
     export-library --out library.json             full dump for the HTML library page
 
-Transcript JSON format (what footage-analyst produces):
+Transcript JSON format (what aod-footage-analyst produces):
     [{"start": 12.4, "end": 19.1, "speaker": "SPEAKER_1", "text": "..."}, ...]
 """
 
@@ -384,7 +384,7 @@ def cmd_stats(con, args):
           f"the rest are findable by name/shoot only")
     print(f"   👤 {tagged} file(s) have people tagged")
     if f[0] and transcribed < f[0]:
-        print(f"   💡 To make more footage searchable by what's said: run footage-analyst "
+        print(f"   💡 To make more footage searchable by what's said: run aod-footage-analyst "
               f"on the untranscribed clips\n")
     else:
         print()
